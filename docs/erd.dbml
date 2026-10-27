@@ -1,0 +1,49 @@
+// ERD Fietsverhuur "Trapkracht"
+
+Table rollen {
+  id integer [pk, increment]
+  naam varchar [unique, not null, note: 'klant, medewerker, admin']
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table gebruikers {
+  id integer [pk, increment]
+  rol_id integer [not null, ref: > rollen.id]
+  naam varchar [not null]
+  email varchar [unique, not null]
+  wachtwoord varchar [not null]
+  telefoon varchar
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table fiets_types {
+  id integer [pk, increment]
+  naam varchar [unique, not null, note: 'stadsfiets, e-bike, tandem, bakfiets']
+}
+
+Table fietsen {
+  id integer [pk, increment]
+  fiets_type_id integer [not null, ref: > fiets_types.id]
+  merk varchar [not null]
+  framemaat varchar [not null]
+  foto varchar [note: 'pad naar de afbeelding']
+  dagprijs decimal(8,2) [not null]
+  in_verhuur boolean [not null, default: true, note: 'false = kapot / uit de verhuur, kan terug op true']
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table reserveringen {
+  id integer [pk, increment]
+  gebruiker_id integer [not null, ref: > gebruikers.id, note: 'de klant']
+  fiets_id integer [not null, ref: > fietsen.id]
+  ophaaldatum date [not null]
+  terugbrengdatum date [not null, note: 'geplande datum']
+  totaalprijs decimal(8,2) [not null, note: 'prijs op het moment van reserveren']
+  inleverdatum date [null, note: 'leeg zolang de fiets onderweg is']
+  opmerking text [null, note: 'bijv. lekke band']
+  created_at timestamp
+  updated_at timestamp
+}
