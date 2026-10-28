@@ -343,6 +343,150 @@ header nav a.btn:hover {
     color: #a13a20;
 }
 
+.message-success {
+    background-color: #e1f1df;
+    color: #2f6a2b;
+}
+
+/* melding bovenaan de pagina na een formulier */
+.flash {
+    max-width: 1060px;
+    margin: 20px auto 0;
+    font-weight: 600;
+}
+
+/* formulieren: inloggen, registreren en mijn gegevens */
+.login-form {
+    max-width: 440px;
+    margin: 30px auto 0;
+    background-color: white;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.login-form div,
+.reserveer-form .datums div {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+.login-form label,
+.reserveer-form label {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.login-form input,
+.reserveer-form input {
+    padding: 10px;
+    font-family: inherit;
+    font-size: 15px;
+    border: 2px solid var(--zand);
+    border-radius: 10px;
+    background-color: var(--duin);
+}
+
+.login-form input:focus,
+.reserveer-form input:focus {
+    outline: none;
+    border-color: var(--zee);
+}
+
+.login-form button {
+    width: 100%;
+    margin-top: 5px;
+}
+
+.login-form a,
+.empty a {
+    color: var(--zee);
+    font-weight: 600;
+}
+
+/* reserveren op de detailpagina */
+.reserveer-form {
+    background-color: var(--duin);
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.reserveer-form h3 {
+    margin-bottom: 12px;
+}
+
+.reserveer-form .datums {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.reserveer-form .datums div {
+    flex: 1;
+    min-width: 140px;
+}
+
+.reserveer-form input {
+    background-color: white;
+}
+
+/* tabel met reserveringen */
+.tabel-wrapper {
+    overflow-x: auto;
+}
+
+.tabel {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.tabel th,
+.tabel td {
+    text-align: left;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--duin);
+    white-space: nowrap;
+}
+
+.tabel th {
+    background-color: var(--zee);
+    color: white;
+    font-size: 14px;
+}
+
+.tabel td .badge {
+    margin-right: 6px;
+}
+
+.status {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+}
+
+.status-gepland {
+    background-color: #fdebd3;
+    color: #a35f12;
+}
+
+.status-onderweg {
+    background-color: #e3f0ee;
+    color: var(--zee);
+}
+
+.status-klaar {
+    background-color: #e1f1df;
+    color: #2f6a2b;
+}
+
 /* foutpagina's */
 .error-page {
     text-align: center;
@@ -396,8 +540,26 @@ footer {
         padding: 10px 16px;
     }
 
-    header nav li:first-child {
-        display: none;
+    /* op een telefoon blijft de header niet vast staan, anders neemt hij te veel ruimte in */
+    header {
+        position: static;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    header nav ul {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px 16px;
+        font-size: 14px;
+    }
+
+    .flash {
+        margin: 16px 16px 0;
+    }
+
+    .login-form {
+        padding: 20px;
     }
 
     .hero {

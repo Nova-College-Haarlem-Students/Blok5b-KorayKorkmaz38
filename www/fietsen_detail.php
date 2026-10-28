@@ -52,6 +52,27 @@ require 'header.php';
                     <p class="price">€ <?php echo number_format($fiets['dagprijs'], 2, ',', '') ?> <span>/ dag</span></p>
                     <?php if ($fiets['in_verhuur'] == 0) : ?>
                         <p class="message message-error">Deze fiets is tijdelijk uit de verhuur.</p>
+                    <?php elseif (isset($_SESSION['user_id'])) : ?>
+                        <form action="reservering-process.php" method="post" class="reserveer-form">
+                            <h3>Reserveren</h3>
+                            <input type="hidden" name="fiets_id" value="<?php echo htmlspecialchars($fiets['id']) ?>">
+                            <div class="datums">
+                                <div>
+                                    <label for="ophaaldatum">Ophaaldatum</label>
+                                    <input type="date" name="ophaaldatum" id="ophaaldatum" min="<?php echo date('Y-m-d') ?>" required>
+                                </div>
+                                <div>
+                                    <label for="terugbrengdatum">Terugbrengdatum</label>
+                                    <input type="date" name="terugbrengdatum" id="terugbrengdatum" min="<?php echo date('Y-m-d') ?>" required>
+                                </div>
+                            </div>
+                            <!-- hier komt het antwoord van de AJAX-check -->
+                            <p class="message" id="beschikbaarMelding" hidden></p>
+                            <button type="button" class="btn btn-light" id="checkBtn">Is hij vrij?</button>
+                            <button type="submit" class="btn btn-orange">Reserveer</button>
+                        </form>
+                    <?php else : ?>
+                        <p><a href="login.php" class="btn btn-orange">Log in om te reserveren</a></p>
                     <?php endif; ?>
                     <p><a href="index.php" class="btn btn-light">Terug naar alle fietsen</a></p>
                 </div>
@@ -60,4 +81,41 @@ require 'header.php';
     </div>
 </main>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const checkBtn = document.querySelector('#checkBtn');
+        const melding = document.querySelector('#beschikbaarMelding');
+        if (checkBtn && melding) {
+            checkBtn.addEventListener('click', function () {
+
+                // AJAX call naar de server maken, de pagina herlaadt niet
+                fetch('beschikbaar.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        fiets_id: <?php echo (int) $fiets['id']; ?>,
+                        ophaaldatum: document.querySelector('#ophaaldatum').value,
+                        terugbrengdatum: document.querySelector('#terugbrengdatum').value
+                    })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        // groen als de fiets vrij is, anders rood
+                        if (data.success && data.vrij) {
+                            melding.className = 'message message-success';
+                        } else {
+                            melding.className = 'message message-error';
+                        }
+                        melding.textContent = data.melding;
+                        melding.hidden = false;
+                    })
+                    .catch(error => {
+                        console.table('Serverfout: ' + error);
+                    });
+            });
+        }
+    });
+</script>
 <?php require 'footer.php' ?>
