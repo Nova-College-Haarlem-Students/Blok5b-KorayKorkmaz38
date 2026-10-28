@@ -38,7 +38,7 @@ require 'header.php';
         <div class="product-detail">
             <div class="row">
                 <div class="col">
-                    <img src="<?php echo isset($fiets['foto']) ? htmlspecialchars($fiets['foto']) : 'https://placehold.co/400' ?>"
+                    <img src="<?php echo isset($fiets['foto']) ? 'images/' . htmlspecialchars($fiets['foto']) : 'https://placehold.co/400' ?>"
                         alt="<?php echo htmlspecialchars($fiets['merk']) ?>">
                 </div>
                 <div class="col">

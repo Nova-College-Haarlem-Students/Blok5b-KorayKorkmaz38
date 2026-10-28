@@ -74,18 +74,18 @@ CREATE TABLE `fietsen` (
 LOCK TABLES `fietsen` WRITE;
 /*!40000 ALTER TABLE `fietsen` DISABLE KEYS */;
 INSERT INTO `fietsen` VALUES
-(1,1,'Gazelle','53','img/fietsen/gazelle-stad.jpg',12.50,1,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
-(2,1,'Batavus','57','img/fietsen/batavus-stad.jpg',12.50,1,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
-(3,1,'Sparta','49','img/fietsen/sparta-stad.jpg',11.00,1,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
-(4,2,'Stromer','54','img/fietsen/stromer.jpg',29.95,1,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
-(5,2,'Gazelle','57','img/fietsen/gazelle-ebike.jpg',27.50,1,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
-(6,2,'QWIC','50','img/fietsen/qwic.jpg',25.00,1,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
-(7,3,'Santos','L','img/fietsen/santos-tandem.jpg',35.00,1,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
-(8,3,'Cortina','XL',NULL,32.50,1,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
-(9,4,'Babboe','M','img/fietsen/babboe.jpg',39.95,1,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
-(10,4,'Urban Arrow','M','img/fietsen/urban-arrow.jpg',45.00,0,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
-(11,1,'Cortina','61',NULL,13.00,1,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
-(12,2,'Batavus','53','img/fietsen/batavus-ebike.jpg',27.50,1,'2026-10-27 10:21:02','2026-10-27 10:21:02');
+(1,1,'Gazelle','53','gazelle-stad.jpg',12.50,1,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
+(2,1,'Batavus','57','batavus-stad.jpg',12.50,1,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
+(3,1,'Sparta','49','sparta-stad.jpg',11.00,1,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
+(4,2,'Stromer','54','stromer.jpg',29.95,1,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
+(5,2,'Gazelle','57','gazelle-ebike.jpg',27.50,1,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
+(6,2,'QWIC','50','qwic.jpg',25.00,1,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
+(7,3,'Santos','L','santos-tandem.jpg',35.00,1,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
+(8,3,'Cortina','XL','cortina-tandem.jpg',32.50,1,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
+(9,4,'Babboe','M','babboe.jpg',39.95,1,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
+(10,4,'Urban Arrow','M','urban-arrow.jpg',45.00,0,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
+(11,1,'Cortina','61','cortina.jpg',13.00,1,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
+(12,2,'Batavus','53','batavus-ebike.jpg',27.50,1,'2026-10-27 10:21:02','2026-10-27 10:21:02');
 /*!40000 ALTER TABLE `fietsen` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -219,4 +219,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-10-27 11:21:09
+-- Dump completed on 2026-10-28 11:33:49

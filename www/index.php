@@ -106,7 +106,7 @@ require 'header.php';
         <div class="products">
             <?php foreach ($fietsen as $fiets) : ?>
                 <div class="product">
-                    <img src="<?php echo isset($fiets['foto']) ? htmlspecialchars($fiets['foto']) : 'https://placehold.co/200' ?>" alt="<?php echo htmlspecialchars($fiets['merk']) ?>">
+                    <img src="<?php echo isset($fiets['foto']) ? 'images/' . htmlspecialchars($fiets['foto']) : 'https://placehold.co/200' ?>" alt="<?php echo htmlspecialchars($fiets['merk']) ?>">
                     <h3><?php echo htmlspecialchars($fiets['merk']) ?></h3>
                     <p><?php echo htmlspecialchars($fiets['type_naam']) ?> - framemaat <?php echo htmlspecialchars($fiets['framemaat']) ?></p>
                     <p>€ <?php echo number_format($fiets['dagprijs'], 2, ',', '') ?> per dag</p>
