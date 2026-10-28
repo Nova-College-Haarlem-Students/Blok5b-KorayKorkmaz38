@@ -1,146 +1,119 @@
 <?php
-// Overzicht van alle beschikbare fietsen, met filter (type + framemaat) en sortering op dagprijs
-require_once __DIR__ . '/includes/database.php';
+session_start();
+require 'database.php';
 
-// Gekozen filters uit de URL
-$gekozenType = $_GET['type'] ?? '';
-$gekozenFramemaat = $_GET['framemaat'] ?? '';
-$gekozenSortering = $_GET['sorteer'] ?? '';
+// Filteren en sorteren met GET parameters: type, framemaat en sorteer
+$type      = $_GET['type'] ?? '';
+$framemaat = $_GET['framemaat'] ?? '';
+$sorteer   = $_GET['sorteer'] ?? '';
 
-// Type moet een id zijn, anders negeren we het filter
-if ($gekozenType !== '' && !is_numeric($gekozenType)) {
-    $gekozenType = '';
+// type is een id, dus moet een getal zijn
+if ($type !== '' && !is_numeric($type)) {
+    $type = '';
 }
 
-// Alleen deze twee sorteringen zijn toegestaan (whitelist), want ORDER BY kan geen placeholder gebruiken
-$sorteringen = [
-    'prijs_op' => 'f.dagprijs ASC',
-    'prijs_af' => 'f.dagprijs DESC',
-];
-$orderBy = $sorteringen[$gekozenSortering] ?? 't.naam ASC, f.merk ASC';
-
 try {
-    // Keuzelijst types: alleen types waar beschikbare fietsen van zijn, zonder dubbele waardes
-    $stmt = $pdo->prepare('
-        SELECT DISTINCT t.id, t.naam
-        FROM fietsen f
-        LEFT JOIN fiets_types t ON t.id = f.fiets_type_id
-        WHERE f.in_verhuur = 1
-        ORDER BY t.naam
-    ');
-    $stmt->execute();
-    $types = $stmt->fetchAll();
+    // alleen fietsen die in de verhuur zijn, met de naam van het type erbij
+    $sql = "SELECT fietsen.*, fiets_types.naam AS type_naam
+            FROM fietsen
+            LEFT JOIN fiets_types ON fietsen.fiets_type_id = fiets_types.id
+            WHERE fietsen.in_verhuur = 1";
+    $params = [];
 
-    // Keuzelijst framematen, zonder dubbele waardes
-    $stmt = $pdo->prepare('
-        SELECT DISTINCT framemaat
-        FROM fietsen
-        WHERE in_verhuur = 1
-        ORDER BY framemaat
-    ');
-    $stmt->execute();
-    $framematen = $stmt->fetchAll();
-
-    // De fietsen zelf. Filters worden alleen toegevoegd als ze gekozen zijn.
-    $sql = '
-        SELECT f.id, f.merk, f.framemaat, f.foto, f.dagprijs, t.naam AS type
-        FROM fietsen f
-        LEFT JOIN fiets_types t ON t.id = f.fiets_type_id
-        WHERE f.in_verhuur = 1
-    ';
-    $parameters = [];
-
-    if ($gekozenType !== '') {
-        $sql .= ' AND f.fiets_type_id = :type';
-        $parameters[':type'] = $gekozenType;
+    if ($type !== '') {
+        $sql .= " AND fietsen.fiets_type_id = :type";
+        $params['type'] = $type;
     }
-    if ($gekozenFramemaat !== '') {
-        $sql .= ' AND f.framemaat = :framemaat';
-        $parameters[':framemaat'] = $gekozenFramemaat;
+    if ($framemaat !== '') {
+        $sql .= " AND fietsen.framemaat = :framemaat";
+        $params['framemaat'] = $framemaat;
     }
-    $sql .= ' ORDER BY ' . $orderBy;
 
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute($parameters);
-    $fietsen = $stmt->fetchAll();
+    // sorteren op dagprijs: laag-hoog of hoog-laag
+    if ($sorteer === 'laag') {
+        $sql .= " ORDER BY fietsen.dagprijs ASC";
+    } elseif ($sorteer === 'hoog') {
+        $sql .= " ORDER BY fietsen.dagprijs DESC";
+    } else {
+        $sql .= " ORDER BY fiets_types.naam, fietsen.merk";
+    }
+
+    $stmt = $conn->prepare($sql);
+    $stmt->execute($params);
+    $fietsen = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // types voor de dropdown
+    $stmt = $conn->prepare("SELECT DISTINCT fiets_types.id, fiets_types.naam
+                            FROM fietsen
+                            LEFT JOIN fiets_types ON fietsen.fiets_type_id = fiets_types.id
+                            WHERE fietsen.in_verhuur = 1
+                            ORDER BY fiets_types.naam");
+    $stmt->execute();
+    $types = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // framematen voor de dropdown
+    $stmt = $conn->prepare("SELECT DISTINCT framemaat FROM fietsen WHERE in_verhuur = 1 ORDER BY framemaat");
+    $stmt->execute();
+    $framematen = $stmt->fetchAll(PDO::FETCH_COLUMN);
 } catch (PDOException $e) {
-    require __DIR__ . '/errors/500.php';
+    // Log de error (niet tonen aan gebruiker!)
+    error_log("Database error: " . $e->getMessage());
+    header('Location: 500.php');
     exit;
 }
 
-$paginaTitel = 'Onze fietsen';
-require __DIR__ . '/includes/header.php';
+require 'header.php';
 ?>
-
-<section class="intro">
-    <h1>Huur een fiets bij Trapkracht</h1>
-    <p>Naar het strand of door de duinen: kies je fiets en reserveer voor een of meer dagen.</p>
-</section>
-
-<form method="get" action="/index.php" class="filter">
-    <label>
-        Type
-        <select name="type">
-            <option value="">Alle types</option>
-            <?php foreach ($types as $type): ?>
-                <option value="<?= htmlspecialchars($type['id']) ?>"
-                    <?= (string)$type['id'] === $gekozenType ? 'selected' : '' ?>>
-                    <?= htmlspecialchars($type['naam']) ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-    </label>
-
-    <label>
-        Framemaat
-        <select name="framemaat">
-            <option value="">Alle maten</option>
-            <?php foreach ($framematen as $maat): ?>
-                <option value="<?= htmlspecialchars($maat['framemaat']) ?>"
-                    <?= $maat['framemaat'] === $gekozenFramemaat ? 'selected' : '' ?>>
-                    <?= htmlspecialchars($maat['framemaat']) ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-    </label>
-
-    <label>
-        Sorteren
-        <select name="sorteer">
-            <option value="">Standaard</option>
-            <option value="prijs_op" <?= $gekozenSortering === 'prijs_op' ? 'selected' : '' ?>>Dagprijs laag - hoog</option>
-            <option value="prijs_af" <?= $gekozenSortering === 'prijs_af' ? 'selected' : '' ?>>Dagprijs hoog - laag</option>
-        </select>
-    </label>
-
-    <div class="filter-knoppen">
-        <button type="submit" class="knop">Toon fietsen</button>
-        <a href="/index.php" class="knop knop-licht">Wis filters</a>
+<main>
+    <div class="container">
+        <form action="index.php" method="get" class="filter">
+            <div>
+                <label for="type">Type:</label>
+                <select name="type" id="type">
+                    <option value="">Alle types</option>
+                    <?php foreach ($types as $t) : ?>
+                        <option value="<?php echo htmlspecialchars($t['id']) ?>" <?php echo $t['id'] == $type ? 'selected' : '' ?>><?php echo htmlspecialchars($t['naam']) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div>
+                <label for="framemaat">Framemaat:</label>
+                <select name="framemaat" id="framemaat">
+                    <option value="">Alle framematen</option>
+                    <?php foreach ($framematen as $maat) : ?>
+                        <option value="<?php echo htmlspecialchars($maat) ?>" <?php echo $maat === $framemaat ? 'selected' : '' ?>><?php echo htmlspecialchars($maat) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div>
+                <label for="sorteer">Sorteren:</label>
+                <select name="sorteer" id="sorteer">
+                    <option value="">Standaard</option>
+                    <option value="laag" <?php echo $sorteer === 'laag' ? 'selected' : '' ?>>Dagprijs laag - hoog</option>
+                    <option value="hoog" <?php echo $sorteer === 'hoog' ? 'selected' : '' ?>>Dagprijs hoog - laag</option>
+                </select>
+            </div>
+            <button type="submit" class="btn">Zoek</button>
+            <a href="index.php" class="btn btn-light">Wis filters</a>
+        </form>
     </div>
-</form>
 
-<p class="aantal"><?= htmlspecialchars(count($fietsen)) ?> fiets(en) gevonden</p>
-
-<?php if (count($fietsen) === 0): ?>
-    <p class="leeg">Er zijn geen fietsen die aan je filters voldoen.</p>
-<?php else: ?>
-    <div class="fietsen-grid">
-        <?php foreach ($fietsen as $fiets): ?>
-            <a href="/fiets.php?id=<?= htmlspecialchars($fiets['id']) ?>" class="fiets-kaart">
-                <?php if ($fiets['foto'] !== null && file_exists(__DIR__ . '/' . $fiets['foto'])): ?>
-                    <img src="/<?= htmlspecialchars($fiets['foto']) ?>" alt="<?= htmlspecialchars($fiets['merk']) ?>">
-                <?php else: ?>
-                    <div class="foto-placeholder"><?= htmlspecialchars($fiets['type']) ?></div>
-                <?php endif; ?>
-                <div class="fiets-info">
-                    <span class="label"><?= htmlspecialchars($fiets['type']) ?></span>
-                    <h2><?= htmlspecialchars($fiets['merk']) ?></h2>
-                    <p>Framemaat <?= htmlspecialchars($fiets['framemaat']) ?></p>
-                    <p class="prijs">&euro; <?= htmlspecialchars(number_format($fiets['dagprijs'], 2, ',', '.')) ?> <small>per dag</small></p>
+    <div class="container">
+        <h1>Fietsen (<?php echo count($fietsen) ?>)</h1>
+        <?php if (empty($fietsen)) : ?>
+            <p>Geen fietsen gevonden.</p>
+        <?php endif; ?>
+        <div class="products">
+            <?php foreach ($fietsen as $fiets) : ?>
+                <div class="product">
+                    <img src="<?php echo isset($fiets['foto']) ? htmlspecialchars($fiets['foto']) : 'https://placehold.co/200' ?>" alt="<?php echo htmlspecialchars($fiets['merk']) ?>">
+                    <h3><?php echo htmlspecialchars($fiets['merk']) ?></h3>
+                    <p><?php echo htmlspecialchars($fiets['type_naam']) ?> - framemaat <?php echo htmlspecialchars($fiets['framemaat']) ?></p>
+                    <p>€ <?php echo number_format($fiets['dagprijs'], 2, ',', '') ?> per dag</p>
+                    <a href="fietsen_detail.php?id=<?php echo htmlspecialchars($fiets['id']) ?>" class="btn">Bekijk</a>
                 </div>
-            </a>
-        <?php endforeach; ?>
+            <?php endforeach; ?>
+        </div>
     </div>
-<?php endif; ?>
-
-<?php require __DIR__ . '/includes/footer.php'; ?>
+</main>
+<?php require 'footer.php' ?>
