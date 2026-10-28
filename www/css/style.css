@@ -1,0 +1,304 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: #f5f7f4;
+    color: #1f2a24;
+    line-height: 1.5;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+a {
+    color: #1d6b45;
+}
+
+.container {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 16px;
+}
+
+main.container {
+    flex: 1;
+    padding-top: 24px;
+    padding-bottom: 40px;
+}
+
+/* Header en footer */
+.site-header {
+    background: #1d6b45;
+}
+
+.header-inhoud {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 64px;
+}
+
+.logo {
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.4rem;
+    text-decoration: none;
+}
+
+.site-header nav a {
+    color: #fff;
+    text-decoration: none;
+    margin-left: 16px;
+}
+
+.site-header nav a:hover {
+    text-decoration: underline;
+}
+
+.site-footer {
+    background: #1f2a24;
+    color: #c9d3cd;
+    font-size: 0.9rem;
+}
+
+/* Intro */
+.intro h1 {
+    margin: 0 0 4px;
+}
+
+.intro p {
+    margin: 0 0 20px;
+    color: #4d5c54;
+}
+
+/* Filter */
+.filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: flex-end;
+    background: #fff;
+    padding: 16px;
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.filter label {
+    display: flex;
+    flex-direction: column;
+    font-weight: 600;
+    font-size: 0.9rem;
+    gap: 4px;
+}
+
+.filter select {
+    min-width: 170px;
+    padding: 8px;
+    border: 1px solid #c4cec8;
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+.filter-knoppen {
+    display: flex;
+    gap: 8px;
+}
+
+.knop {
+    display: inline-block;
+    background: #1d6b45;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 9px 16px;
+    font-size: 1rem;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.knop:hover {
+    background: #15553a;
+}
+
+.knop-licht {
+    background: #e3ebe6;
+    color: #1f2a24;
+}
+
+.knop-licht:hover {
+    background: #d2ddd6;
+}
+
+.aantal {
+    color: #4d5c54;
+    margin: 20px 0 12px;
+}
+
+.leeg {
+    background: #fff;
+    padding: 24px;
+    border-radius: 10px;
+}
+
+/* Fietsen */
+.fietsen-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 20px;
+}
+
+.fiets-kaart {
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.fiets-kaart:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.fiets-kaart img,
+.foto-placeholder {
+    width: 100%;
+    height: 170px;
+    object-fit: cover;
+    display: block;
+}
+
+.foto-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #dbe7df;
+    color: #1d6b45;
+    font-weight: 700;
+    text-transform: capitalize;
+}
+
+.foto-placeholder.groot {
+    height: 320px;
+    border-radius: 10px;
+    font-size: 1.5rem;
+}
+
+.fiets-info {
+    padding: 14px 16px 16px;
+}
+
+.fiets-info h2 {
+    margin: 6px 0 2px;
+    font-size: 1.2rem;
+}
+
+.fiets-info p {
+    margin: 0;
+    color: #4d5c54;
+}
+
+.label {
+    display: inline-block;
+    background: #e3ebe6;
+    color: #1d6b45;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 99px;
+    text-transform: capitalize;
+}
+
+.prijs {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #1f2a24 !important;
+    margin-top: 8px !important;
+}
+
+.prijs small {
+    font-size: 0.85rem;
+    font-weight: 400;
+    color: #4d5c54;
+}
+
+/* Detailpagina */
+.terug {
+    display: inline-block;
+    margin-bottom: 16px;
+}
+
+.fiets-detail {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    background: #fff;
+    padding: 24px;
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.fiets-detail img {
+    width: 100%;
+    border-radius: 10px;
+}
+
+.fiets-gegevens h1 {
+    margin: 8px 0 16px;
+}
+
+.fiets-gegevens dl {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 6px 20px;
+    margin: 0;
+}
+
+.fiets-gegevens dt {
+    font-weight: 600;
+}
+
+.fiets-gegevens dd {
+    margin: 0;
+    text-transform: capitalize;
+}
+
+.melding {
+    background: #fff4e0;
+    border-left: 4px solid #e09b2d;
+    padding: 10px 14px;
+    border-radius: 6px;
+}
+
+/* Foutpagina's */
+.foutpagina {
+    text-align: center;
+    padding: 60px 16px;
+}
+
+.foutpagina h1 {
+    font-size: 5rem;
+    margin: 0;
+    color: #1d6b45;
+}
+
+@media (max-width: 700px) {
+    .fiets-detail {
+        grid-template-columns: 1fr;
+    }
+
+    .filter select {
+        min-width: 0;
+        width: 100%;
+    }
+
+    .filter label {
+        flex: 1 1 100%;
+    }
+}
