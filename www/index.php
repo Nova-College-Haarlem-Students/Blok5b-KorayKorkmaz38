@@ -65,8 +65,16 @@ try {
 require 'header.php';
 ?>
 <main>
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Fiets naar het strand en de duinen</h1>
+            <p>Stadsfietsen, e-bikes, tandems en bakfietsen. Huur je fiets vlak bij het station, voor een of meer dagen.</p>
+            <a href="#fietsen" class="btn btn-orange">Bekijk alle fietsen</a>
+        </div>
+    </section>
+
     <div class="container">
-        <form action="index.php" method="get" class="filter">
+        <form action="index.php#fietsen" method="get" class="filter">
             <div>
                 <label for="type">Type:</label>
                 <select name="type" id="type">
@@ -98,19 +106,24 @@ require 'header.php';
         </form>
     </div>
 
-    <div class="container">
-        <h1>Fietsen (<?php echo count($fietsen) ?>)</h1>
+    <div class="container" id="fietsen">
+        <h2 class="section-title">Onze fietsen <span>(<?php echo count($fietsen) ?>)</span></h2>
         <?php if (empty($fietsen)) : ?>
-            <p>Geen fietsen gevonden.</p>
+            <p class="empty">Geen fietsen gevonden. Probeer een ander filter.</p>
         <?php endif; ?>
         <div class="products">
             <?php foreach ($fietsen as $fiets) : ?>
                 <div class="product">
                     <img src="<?php echo isset($fiets['foto']) ? 'images/' . htmlspecialchars($fiets['foto']) : 'https://placehold.co/200' ?>" alt="<?php echo htmlspecialchars($fiets['merk']) ?>">
-                    <h3><?php echo htmlspecialchars($fiets['merk']) ?></h3>
-                    <p><?php echo htmlspecialchars($fiets['type_naam']) ?> - framemaat <?php echo htmlspecialchars($fiets['framemaat']) ?></p>
-                    <p>€ <?php echo number_format($fiets['dagprijs'], 2, ',', '') ?> per dag</p>
-                    <a href="fietsen_detail.php?id=<?php echo htmlspecialchars($fiets['id']) ?>" class="btn">Bekijk</a>
+                    <div class="product-info">
+                        <span class="badge"><?php echo htmlspecialchars($fiets['type_naam']) ?></span>
+                        <h3><?php echo htmlspecialchars($fiets['merk']) ?></h3>
+                        <p>Framemaat <?php echo htmlspecialchars($fiets['framemaat']) ?></p>
+                        <div class="product-bottom">
+                            <p class="price">€ <?php echo number_format($fiets['dagprijs'], 2, ',', '') ?> <span>/ dag</span></p>
+                            <a href="fietsen_detail.php?id=<?php echo htmlspecialchars($fiets['id']) ?>" class="btn">Bekijk</a>
+                        </div>
+                    </div>
                 </div>
             <?php endforeach; ?>
         </div>

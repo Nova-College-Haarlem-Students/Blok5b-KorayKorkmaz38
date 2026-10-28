@@ -42,10 +42,14 @@ require 'header.php';
                         alt="<?php echo htmlspecialchars($fiets['merk']) ?>">
                 </div>
                 <div class="col">
-                    <h3><?php echo htmlspecialchars($fiets['merk']) ?></h3>
-                    <p>Type: <?php echo htmlspecialchars($fiets['type_naam']) ?></p>
-                    <p>Framemaat: <?php echo htmlspecialchars($fiets['framemaat']) ?></p>
-                    <p>€ <?php echo number_format($fiets['dagprijs'], 2, ',', '') ?> per dag</p>
+                    <span class="badge"><?php echo htmlspecialchars($fiets['type_naam']) ?></span>
+                    <h1><?php echo htmlspecialchars($fiets['merk']) ?></h1>
+                    <ul class="specs">
+                        <li><strong>Type</strong> <?php echo htmlspecialchars($fiets['type_naam']) ?></li>
+                        <li><strong>Merk</strong> <?php echo htmlspecialchars($fiets['merk']) ?></li>
+                        <li><strong>Framemaat</strong> <?php echo htmlspecialchars($fiets['framemaat']) ?></li>
+                    </ul>
+                    <p class="price">€ <?php echo number_format($fiets['dagprijs'], 2, ',', '') ?> <span>/ dag</span></p>
                     <?php if ($fiets['in_verhuur'] == 0) : ?>
                         <p class="message message-error">Deze fiets is tijdelijk uit de verhuur.</p>
                     <?php endif; ?>
