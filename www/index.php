@@ -17,7 +17,7 @@ try {
     $sql = "SELECT fietsen.*, fiets_types.naam AS type_naam
             FROM fietsen
             LEFT JOIN fiets_types ON fietsen.fiets_type_id = fiets_types.id
-            WHERE fietsen.in_verhuur = 1";
+            WHERE fietsen.deleted_at IS NULL";
     $params = [];
 
     if ($type !== '') {
@@ -46,13 +46,13 @@ try {
     $stmt = $conn->prepare("SELECT DISTINCT fiets_types.id, fiets_types.naam
                             FROM fietsen
                             LEFT JOIN fiets_types ON fietsen.fiets_type_id = fiets_types.id
-                            WHERE fietsen.in_verhuur = 1
+                            WHERE fietsen.deleted_at IS NULL
                             ORDER BY fiets_types.naam");
     $stmt->execute();
     $types = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // framematen voor de dropdown
-    $stmt = $conn->prepare("SELECT DISTINCT framemaat FROM fietsen WHERE in_verhuur = 1 ORDER BY framemaat");
+    $stmt = $conn->prepare("SELECT DISTINCT framemaat FROM fietsen WHERE deleted_at IS NULL ORDER BY framemaat");
     $stmt->execute();
     $framematen = $stmt->fetchAll(PDO::FETCH_COLUMN);
 } catch (PDOException $e) {

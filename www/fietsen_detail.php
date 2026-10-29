@@ -50,7 +50,7 @@ require 'header.php';
                         <li><strong>Framemaat</strong> <?php echo htmlspecialchars($fiets['framemaat']) ?></li>
                     </ul>
                     <p class="price">€ <?php echo number_format($fiets['dagprijs'], 2, ',', '') ?> <span>/ dag</span></p>
-                    <?php if ($fiets['in_verhuur'] == 0) : ?>
+                    <?php if ($fiets['deleted_at'] !== null) : ?>
                         <p class="message message-error">Deze fiets is tijdelijk uit de verhuur.</p>
                     <?php elseif (isset($_SESSION['user_id'])) : ?>
                         <!-- geen action: het formulier wordt met fetch() (AJAX) verstuurd, zie het script onderaan -->

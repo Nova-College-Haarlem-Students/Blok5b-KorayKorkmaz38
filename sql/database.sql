@@ -58,7 +58,7 @@ CREATE TABLE `fietsen` (
   `framemaat` varchar(255) NOT NULL,
   `foto` varchar(255) DEFAULT NULL COMMENT 'pad naar de afbeelding',
   `dagprijs` decimal(8,2) NOT NULL,
-  `in_verhuur` tinyint(1) NOT NULL DEFAULT 1 COMMENT 'false = kapot / uit de verhuur, kan terug op true',
+  `deleted_at` timestamp NULL DEFAULT NULL COMMENT 'NULL = in de verhuur, datum = uit de verhuur (soft delete)',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -74,18 +74,18 @@ CREATE TABLE `fietsen` (
 LOCK TABLES `fietsen` WRITE;
 /*!40000 ALTER TABLE `fietsen` DISABLE KEYS */;
 INSERT INTO `fietsen` VALUES
-(1,1,'Gazelle','53','gazelle-stad.jpg',12.50,1,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
-(2,1,'Batavus','57','batavus-stad.jpg',12.50,1,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
-(3,1,'Sparta','49','sparta-stad.jpg',11.00,1,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
-(4,2,'Stromer','54','stromer.jpg',29.95,1,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
-(5,2,'Gazelle','57','gazelle-ebike.jpg',27.50,1,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
-(6,2,'QWIC','50','qwic.jpg',25.00,1,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
-(7,3,'Santos','L','santos-tandem.jpg',35.00,1,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
-(8,3,'Cortina','XL','cortina-tandem.jpg',32.50,1,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
-(9,4,'Babboe','M','babboe.jpg',39.95,1,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
-(10,4,'Urban Arrow','M','urban-arrow.jpg',45.00,0,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
-(11,1,'Cortina','61','cortina.jpg',13.00,1,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
-(12,2,'Batavus','53','batavus-ebike.jpg',27.50,1,'2026-10-27 10:21:02','2026-10-27 10:21:02');
+(1,1,'Gazelle','53','gazelle-stad.jpg',12.50,NULL,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
+(2,1,'Batavus','57','batavus-stad.jpg',12.50,NULL,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
+(3,1,'Sparta','49','sparta-stad.jpg',11.00,NULL,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
+(4,2,'Stromer','54','stromer.jpg',29.95,NULL,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
+(5,2,'Gazelle','57','gazelle-ebike.jpg',27.50,NULL,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
+(6,2,'QWIC','50','qwic.jpg',25.00,NULL,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
+(7,3,'Santos','L','santos-tandem.jpg',35.00,NULL,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
+(8,3,'Cortina','XL','cortina-tandem.jpg',32.50,NULL,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
+(9,4,'Babboe','M','babboe.jpg',39.95,NULL,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
+(10,4,'Urban Arrow','M','urban-arrow.jpg',45.00,'2026-10-20 08:00:00','2026-10-27 10:21:02','2026-10-27 10:21:02'),
+(11,1,'Cortina','61','cortina.jpg',13.00,NULL,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
+(12,2,'Batavus','53','batavus-ebike.jpg',27.50,NULL,'2026-10-27 10:21:02','2026-10-27 10:21:02');
 /*!40000 ALTER TABLE `fietsen` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -109,7 +109,7 @@ CREATE TABLE `gebruikers` (
   UNIQUE KEY `email` (`email`),
   KEY `rol_id` (`rol_id`),
   CONSTRAINT `gebruikers_ibfk_1` FOREIGN KEY (`rol_id`) REFERENCES `rollen` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -126,8 +126,41 @@ INSERT INTO `gebruikers` VALUES
 (5,1,'Tom de Boer','tom@example.com','$2y$12$binlEH1G0e/tmEae2hmsqeFGM5extiGNLd/kv0Vo.gpRKtvDxJ0te',NULL,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
 (6,1,'Fatima El Amrani','fatima@example.com','$2y$12$binlEH1G0e/tmEae2hmsqeFGM5extiGNLd/kv0Vo.gpRKtvDxJ0te','0645678901','2026-10-27 10:21:02','2026-10-27 10:21:02'),
 (7,1,'Daan Visser','daan@example.com','$2y$12$binlEH1G0e/tmEae2hmsqeFGM5extiGNLd/kv0Vo.gpRKtvDxJ0te','0656789012','2026-10-27 10:21:02','2026-10-27 10:21:02'),
-(8,1,'Emma Smit','emma@example.com','$2y$12$binlEH1G0e/tmEae2hmsqeFGM5extiGNLd/kv0Vo.gpRKtvDxJ0te',NULL,'2026-10-27 10:21:02','2026-10-27 10:21:02');
+(8,1,'Emma Smit','emma@example.com','$2y$12$binlEH1G0e/tmEae2hmsqeFGM5extiGNLd/kv0Vo.gpRKtvDxJ0te',NULL,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
+(9,1,'oudheusden','nova@live.com','$2y$12$IXSr6FIk7hWSYuNLktSBmOJsSDH.i5ntiYb8yEAFsVxaklB1sP30W','0612345','2026-10-29 10:03:30','2026-10-29 10:03:30');
 /*!40000 ALTER TABLE `gebruikers` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `logboek`
+--
+
+DROP TABLE IF EXISTS `logboek`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `logboek` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `gebruiker_id` int(11) NOT NULL COMMENT 'wie de actie deed',
+  `actie` varchar(255) NOT NULL COMMENT 'wat er is gedaan',
+  `created_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `gebruiker_id` (`gebruiker_id`),
+  CONSTRAINT `logboek_ibfk_1` FOREIGN KEY (`gebruiker_id`) REFERENCES `gebruikers` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `logboek`
+--
+
+LOCK TABLES `logboek` WRITE;
+/*!40000 ALTER TABLE `logboek` DISABLE KEYS */;
+INSERT INTO `logboek` VALUES
+(1,2,'Fiets 12 (Batavus) toegevoegd','2026-08-01 07:15:00'),
+(2,3,'Dagprijs van fiets 4 (Stromer) aangepast naar € 29,95','2026-09-15 12:02:00'),
+(3,2,'Reservering 9 bijgewerkt (inleverdatum: 2026-08-24)','2026-08-24 15:40:00'),
+(4,3,'Fiets 10 (Urban Arrow) uit de verhuur gehaald','2026-10-20 08:00:00');
+/*!40000 ALTER TABLE `logboek` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -153,7 +186,7 @@ CREATE TABLE `reserveringen` (
   KEY `fiets_id` (`fiets_id`),
   CONSTRAINT `reserveringen_ibfk_1` FOREIGN KEY (`gebruiker_id`) REFERENCES `gebruikers` (`id`),
   CONSTRAINT `reserveringen_ibfk_2` FOREIGN KEY (`fiets_id`) REFERENCES `fietsen` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -176,7 +209,9 @@ INSERT INTO `reserveringen` VALUES
 (11,4,10,'2026-09-20','2026-09-21',45.00,'2026-09-21','ketting gebroken','2026-10-27 10:21:02','2026-10-27 10:21:02'),
 (12,5,1,'2026-10-25','2026-10-29',50.00,NULL,NULL,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
 (13,6,6,'2026-10-26','2026-10-28',50.00,NULL,NULL,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
-(14,7,4,'2026-11-07','2026-11-09',59.90,NULL,NULL,'2026-10-27 10:21:02','2026-10-27 10:21:02');
+(14,7,4,'2026-11-07','2026-11-09',59.90,NULL,NULL,'2026-10-27 10:21:02','2026-10-27 10:21:02'),
+(15,4,12,'2026-10-30','2026-11-01',82.50,NULL,NULL,'2026-10-29 10:14:37','2026-10-29 10:14:37'),
+(16,4,9,'2026-10-31','2026-11-03',159.80,NULL,NULL,'2026-10-29 10:16:36','2026-10-29 10:16:36');
 /*!40000 ALTER TABLE `reserveringen` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -219,4 +254,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-10-28 11:33:49
+-- Dump completed on 2026-10-29 11:25:13

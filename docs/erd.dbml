@@ -30,7 +30,7 @@ Table fietsen {
   framemaat varchar [not null]
   foto varchar [note: 'pad naar de afbeelding']
   dagprijs decimal(8,2) [not null]
-  in_verhuur boolean [not null, default: true, note: 'false = kapot / uit de verhuur, kan terug op true']
+  deleted_at timestamp [null, note: 'soft delete: NULL = in de verhuur, datum = uit de verhuur']
   created_at timestamp
   updated_at timestamp
 }
@@ -46,4 +46,11 @@ Table reserveringen {
   opmerking text [null, note: 'bijv. lekke band']
   created_at timestamp
   updated_at timestamp
+}
+
+Table logboek {
+  id integer [pk, increment]
+  gebruiker_id integer [not null, ref: > gebruikers.id, note: 'wie de actie deed (medewerker of admin)']
+  actie varchar [not null, note: 'bijv. fiets 3 uit de verhuur gehaald']
+  created_at timestamp
 }

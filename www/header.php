@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trapkracht Fietsverhuur</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
-    <!-- ?v=4 zorgt dat de browser de nieuwe CSS laadt in plaats van een oude uit de cache -->
-    <link rel="stylesheet" href="css/style.css?v=4">
+    <!-- ?v=5 zorgt dat de browser de nieuwe CSS laadt in plaats van een oude uit de cache -->
+    <link rel="stylesheet" href="css/style.css?v=5">
 </head>
 
 <body>
@@ -30,6 +30,23 @@
             </ul>
         </nav>
     </header>
+
+    <?php // menu van het beheergedeelte: alleen voor medewerker en admin ?>
+    <?php if (isset($_SESSION['user_id']) && in_array($_SESSION['role'], ['medewerker', 'admin'])): ?>
+        <nav class="beheer-nav">
+            <ul>
+                <li><strong>Beheer:</strong></li>
+                <li><a href="dashboard.php">Dashboard</a></li>
+                <li><a href="fietsen_index.php">Fietsen</a></li>
+                <li><a href="reserveringen_index.php">Reserveringen</a></li>
+                <li><a href="fietsen_nooit_verhuurd.php">Nooit verhuurd</a></li>
+                <?php if ($_SESSION['role'] === 'admin'): ?>
+                    <li><a href="statistieken.php">Statistieken</a></li>
+                    <li><a href="logboek.php">Logboek</a></li>
+                <?php endif; ?>
+            </ul>
+        </nav>
+    <?php endif; ?>
 
     <?php // success/error melding die een process-bestand in de sessie heeft gezet ?>
     <?php if (!empty($_SESSION['message'])) : ?>

@@ -50,7 +50,7 @@ if ($terugbrengdatum < $ophaaldatum) {
 
 try {
     // de fiets moet bestaan en in de verhuur zijn
-    $stmt = $conn->prepare("SELECT * FROM fietsen WHERE id = :id AND in_verhuur = 1");
+    $stmt = $conn->prepare("SELECT * FROM fietsen WHERE id = :id AND deleted_at IS NULL");
     $stmt->execute(['id' => $fiets_id]);
     $fiets = $stmt->fetch(PDO::FETCH_ASSOC);
 

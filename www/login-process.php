@@ -49,5 +49,11 @@ $_SESSION['email'] = $user['email'];
 $_SESSION['naam'] = $user['naam'];
 
 $_SESSION['message'] = ['type' => 'success', 'text' => 'Welkom terug, ' . $user['naam'] . '!'];
-header("location: index.php");
+
+// medewerker en admin gaan naar het beheergedeelte, een klant naar de homepagina
+if (in_array($user['rol'], ['medewerker', 'admin'])) {
+    header("location: dashboard.php");
+} else {
+    header("location: index.php");
+}
 exit;
