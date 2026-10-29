@@ -53,9 +53,9 @@ require 'header.php';
                     <?php if ($fiets['in_verhuur'] == 0) : ?>
                         <p class="message message-error">Deze fiets is tijdelijk uit de verhuur.</p>
                     <?php elseif (isset($_SESSION['user_id'])) : ?>
-                        <form action="reservering-process.php" method="post" class="reserveer-form">
+                        <!-- geen action: het formulier wordt met fetch() (AJAX) verstuurd, zie het script onderaan -->
+                        <form class="reserveer-form" id="reserveerForm">
                             <h3>Reserveren</h3>
-                            <input type="hidden" name="fiets_id" value="<?php echo htmlspecialchars($fiets['id']) ?>">
                             <div class="datums">
                                 <div>
                                     <label for="ophaaldatum">Ophaaldatum</label>
@@ -66,8 +66,9 @@ require 'header.php';
                                     <input type="date" name="terugbrengdatum" id="terugbrengdatum" min="<?php echo date('Y-m-d') ?>" required>
                                 </div>
                             </div>
-                            <!-- hier komt het antwoord van de AJAX-check -->
+                            <!-- hier komt het antwoord van de server (AJAX) -->
                             <p class="message" id="beschikbaarMelding" hidden></p>
+                            <p id="mijnLink" hidden><a href="mijn_reserveringen.php">Bekijk mijn reserveringen</a></p>
                             <button type="button" class="btn btn-light" id="checkBtn">Is hij vrij?</button>
                             <button type="submit" class="btn btn-orange">Reserveer</button>
                         </form>
@@ -107,6 +108,44 @@ require 'header.php';
                             melding.className = 'message message-success';
                         } else {
                             melding.className = 'message message-error';
+                        }
+                        melding.textContent = data.melding;
+                        melding.hidden = false;
+                    })
+                    .catch(error => {
+                        console.table('Serverfout: ' + error);
+                    });
+            });
+        }
+
+        // Reserveren via AJAX: de pagina wisselt niet
+        const reserveerForm = document.querySelector('#reserveerForm');
+        const mijnLink = document.querySelector('#mijnLink');
+        if (reserveerForm && melding) {
+            reserveerForm.addEventListener('submit', function (e) {
+                e.preventDefault(); // zorgt dat de browser niet naar een andere pagina gaat
+
+                fetch('reservering-process.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        fiets_id: <?php echo (int) $fiets['id']; ?>,
+                        ophaaldatum: document.querySelector('#ophaaldatum').value,
+                        terugbrengdatum: document.querySelector('#terugbrengdatum').value
+                    })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // gelukt: groene melding, datums leegmaken en link naar mijn reserveringen tonen
+                            melding.className = 'message message-success';
+                            reserveerForm.reset();
+                            mijnLink.hidden = false;
+                        } else {
+                            melding.className = 'message message-error';
+                            mijnLink.hidden = true;
                         }
                         melding.textContent = data.melding;
                         melding.hidden = false;

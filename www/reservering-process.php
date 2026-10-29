@@ -1,29 +1,37 @@
 <?php
-require 'login_check.php';
-
-if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-    header('Location: index.php');
-    exit;
-}
-
+session_start();
 require 'database.php';
 
-$fiets_id        = $_POST['fiets_id'] ?? '';
-$ophaaldatum     = $_POST['ophaaldatum'] ?? '';
-$terugbrengdatum = $_POST['terugbrengdatum'] ?? '';
+header('Content-Type: application/json');//vertelt de browser dat we JSON teruggeven
 
-if (!is_numeric($fiets_id)) {
-    header('Location: 404.php');
+// alleen POST, net als bij de andere process-bestanden
+if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+    echo json_encode(['success' => FALSE, 'melding' => 'Ongeldig verzoek.']);
     exit;
 }
 
-// bij een fout gaan we terug naar de pagina van de fiets
-$terug = 'fietsen_detail.php?id=' . (int) $fiets_id;
+// Lees de JSON body
+$input = file_get_contents('php://input');//leest de JSON body
+$data = json_decode($input, true);//decode de JSON body
+
+// sessiecheck: niet ingelogd = niet reserveren
+if (!isset($_SESSION['user_id'])) {
+    echo json_encode(['success' => FALSE, 'melding' => 'Log eerst in om te reserveren.']);
+    exit;
+}
+
+if (!isset($data['fiets_id']) || !is_numeric($data['fiets_id'])) {
+    echo json_encode(['success' => FALSE, 'melding' => 'Deze fiets bestaat niet.']);
+    exit;
+}
+
+$fiets_id        = (int) $data['fiets_id'];
+$ophaaldatum     = $data['ophaaldatum'] ?? '';
+$terugbrengdatum = $data['terugbrengdatum'] ?? '';
 
 // valideren
 if ($ophaaldatum == '' || $terugbrengdatum == '' || strtotime($ophaaldatum) === false || strtotime($terugbrengdatum) === false) {
-    $_SESSION['message'] = ['type' => 'error', 'text' => 'Vul een geldige ophaal- en terugbrengdatum in.'];
-    header('Location: ' . $terug);
+    echo json_encode(['success' => FALSE, 'melding' => 'Vul een geldige ophaal- en terugbrengdatum in.']);
     exit;
 }
 
@@ -32,13 +40,11 @@ $ophaaldatum     = date('Y-m-d', strtotime($ophaaldatum));
 $terugbrengdatum = date('Y-m-d', strtotime($terugbrengdatum));
 
 if ($ophaaldatum < date('Y-m-d')) {
-    $_SESSION['message'] = ['type' => 'error', 'text' => 'De ophaaldatum mag niet in het verleden liggen.'];
-    header('Location: ' . $terug);
+    echo json_encode(['success' => FALSE, 'melding' => 'De ophaaldatum mag niet in het verleden liggen.']);
     exit;
 }
 if ($terugbrengdatum < $ophaaldatum) {
-    $_SESSION['message'] = ['type' => 'error', 'text' => 'De terugbrengdatum mag niet vóór de ophaaldatum liggen.'];
-    header('Location: ' . $terug);
+    echo json_encode(['success' => FALSE, 'melding' => 'De terugbrengdatum mag niet vóór de ophaaldatum liggen.']);
     exit;
 }
 
@@ -49,8 +55,7 @@ try {
     $fiets = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$fiets) {
-        $_SESSION['message'] = ['type' => 'error', 'text' => 'Deze fiets kan nu niet gereserveerd worden.'];
-        header('Location: ' . $terug);
+        echo json_encode(['success' => FALSE, 'melding' => 'Deze fiets kan nu niet gereserveerd worden.']);
         exit;
     }
 
@@ -66,8 +71,7 @@ try {
         'terugbrengdatum' => $terugbrengdatum,
     ]);
     if ($stmt->fetchColumn() > 0) {
-        $_SESSION['message'] = ['type' => 'error', 'text' => 'Deze fiets is in die periode al gereserveerd. Kies andere datums.'];
-        header('Location: ' . $terug);
+        echo json_encode(['success' => FALSE, 'melding' => 'Deze fiets is in die periode al gereserveerd. Kies andere datums.']);
         exit;
     }
 
@@ -88,10 +92,9 @@ try {
 } catch (PDOException $e) {
     // Log de error (niet tonen aan gebruiker!)
     error_log("Database error: " . $e->getMessage());
-    header('Location: 500.php');
+    echo json_encode(['success' => FALSE, 'melding' => 'Er ging iets mis, probeer het later opnieuw.']);
     exit;
 }
 
-$_SESSION['message'] = ['type' => 'success', 'text' => 'Je reservering is opgeslagen: ' . $dagen . ' dag(en) voor € ' . number_format($totaalprijs, 2, ',', '') . '.'];
-header('Location: mijn_reserveringen.php');
-exit;
+$melding = 'Je reservering is opgeslagen: ' . $dagen . ' dag(en) voor € ' . number_format($totaalprijs, 2, ',', '') . '.';
+echo json_encode(['success' => TRUE, 'melding' => $melding]);//geven aan de browser dat het GELUKT is

@@ -14,8 +14,8 @@ if (!isset($_SESSION['user_id']) || !isset($data['fiets_id']) || !is_numeric($da
     exit;
 }
 
-$fiets_id        = (int) $data['fiets_id'];
-$ophaaldatum     = $data['ophaaldatum'] ?? '';
+$fiets_id = (int) $data['fiets_id'];
+$ophaaldatum = $data['ophaaldatum'] ?? '';
 $terugbrengdatum = $data['terugbrengdatum'] ?? '';
 
 // dezelfde controles als in reservering-process.php
@@ -24,7 +24,7 @@ if ($ophaaldatum == '' || $terugbrengdatum == '' || strtotime($ophaaldatum) === 
     exit;
 }
 
-$ophaaldatum     = date('Y-m-d', strtotime($ophaaldatum));
+$ophaaldatum = date('Y-m-d', strtotime($ophaaldatum));
 $terugbrengdatum = date('Y-m-d', strtotime($terugbrengdatum));
 
 if ($ophaaldatum < date('Y-m-d')) {
@@ -52,8 +52,8 @@ try {
                               AND ophaaldatum <= :terugbrengdatum
                               AND terugbrengdatum >= :ophaaldatum");
     $stmt->execute([
-        'fiets_id'        => $fiets_id,
-        'ophaaldatum'     => $ophaaldatum,
+        'fiets_id' => $fiets_id,
+        'ophaaldatum' => $ophaaldatum,
         'terugbrengdatum' => $terugbrengdatum,
     ]);
     $vrij = $stmt->fetchColumn() == 0;

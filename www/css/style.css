@@ -401,6 +401,7 @@ header nav a.btn:hover {
 }
 
 .login-form a,
+.reserveer-form a,
 .empty a {
     color: var(--zee);
     font-weight: 600;
