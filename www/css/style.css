@@ -715,3 +715,13 @@ a.stat:hover {
         padding: 8px 16px;
     }
 }
+
+/* op een telefoon mag tekst in een tabel naar de volgende regel, dan past hij op het scherm */
+@media (max-width: 600px) {
+    .tabel th,
+    .tabel td {
+        white-space: normal;
+        padding: 10px 8px;
+        font-size: 13px;
+    }
+}
